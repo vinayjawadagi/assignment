@@ -1,11 +1,18 @@
 package msg;
 
+import java.util.UUID;
+
 public class Message {
   private String messageId;
   private String content;
-  private final int MAX_MESSAGE_SIZE = 100;
 
-  public Message() {
-
+  public Message(String content) {
+    this.messageId = UUID.randomUUID().toString();
+    this.content = content;
   }
+
+  public String toString() {
+    return messageId + ": " + content;
+  }
+
 }
