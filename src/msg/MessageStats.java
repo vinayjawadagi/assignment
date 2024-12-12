@@ -1,9 +1,15 @@
 package msg;
 
 public class MessageStats {
-    private final Integer sentCount = 0;
-    private final Integer failedCount = 0;
-    private final Long totalProcessingTime = 0;
+    private Integer sentCount;
+    private Integer failedCount;
+    private Long totalProcessingTime;
+
+    public MessageStats() {
+        this.sentCount = 0;
+        this.failedCount = 0;
+        this.totalProcessingTime = (long) 0;
+    }
 
     public void incrementSent() {
         sentCount++;
