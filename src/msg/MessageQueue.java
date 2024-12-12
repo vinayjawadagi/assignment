@@ -3,7 +3,7 @@ package msg;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MessageQueue {
+public class MessageQueue implements IMessageQueue {
   private Queue<Message> queue;
   private int capacity;
   private Object addLockObject = new Object(); // lock for adding to the queue
@@ -31,7 +31,7 @@ public class MessageQueue {
     }
   }
 
-  public synchronized Message remove(Message item) {
+  public Message remove() {
     synchronized (removeLockObject) {
       // wait until the queue has messages to be dequeued
       while (queue.isEmpty()) {
