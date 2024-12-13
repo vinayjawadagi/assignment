@@ -1,42 +1,52 @@
 package msg;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 public class MessageStats {
-    private Integer sentCount;
-    private Integer failedCount;
-    private Long totalProcessingTime;
+    private AtomicInteger sentCount;
+    private AtomicInteger failedCount;
+    private AtomicLong totalProcessingTime;
 
     public MessageStats() {
-        this.sentCount = 0;
-        this.failedCount = 0;
-        this.totalProcessingTime = (long) 0;
+        this.sentCount = new AtomicInteger(0);
+        this.failedCount = new AtomicInteger(0);
+        this.totalProcessingTime = new AtomicLong(0);
     }
 
     public void incrementSent() {
-        sentCount++;
+        sentCount.incrementAndGet();
     }
 
     public void incrementFailed() {
-        failedCount++;
+        failedCount.incrementAndGet();
     }
 
     public void addProcessingTime(long time) {
-        totalProcessingTime += time;
+        totalProcessingTime.addAndGet(time);
     }
 
     public int getSentCount() {
-        return sentCount;
+        return sentCount.get();
     }
 
     public long getTotalProcessingTime() {
-        return this.totalProcessingTime;
+        return totalProcessingTime.get();
     }
 
     public int getFailedCount() {
-        return failedCount;
+        return failedCount.get();
     }
 
     public double getAverageProcessingTime() {
-        int total = sentCount + failedCount;
-        return total > 0 ? totalProcessingTime / (double) total : 0;
+        int total = sentCount.get() + failedCount.get();
+        return total > 0 ? totalProcessingTime.get() / (double) total : 0;
+    }
+
+    public String toString() {
+        return "\nFinal Statistics" +
+                "\nTotal Messages Sent: " + getSentCount() +
+                "\nTotal Messages Failed: " + getFailedCount() +
+                "\nAverage Processing Time: " + getAverageProcessingTime() + " ms";
     }
 }

@@ -23,7 +23,6 @@ public class MessageAlertSim {
         this.failureRate = failureRate;
         this.meanDelay = meanDelay;
         this.monitorInterval = monitorInterval;
-
         // this.messageQueue = new BlockingMessageQueue();
         this.messageQueue = new BlockingMessageQueue(senderCount * 2);
         // this.messageQueue = new MessageQueue(senderCount * 2);
@@ -56,8 +55,6 @@ public class MessageAlertSim {
 
         // Wait until all the messages ahve been sent, check periodically
         while (stats.getSentCount() + stats.getFailedCount() < messageCount) {
-            System.out.println(messageCount);
-            System.out.println(stats.getSentCount() + stats.getFailedCount());
             Thread.sleep(100);
         }
 
