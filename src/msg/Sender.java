@@ -15,6 +15,7 @@ public class Sender implements Runnable {
     public Sender(
             IMessageQueue messageQueue, String senderId,
             double failureRate, int meanDelay, MessageStats stats) {
+        validateArguments(messageQueue, senderId, failureRate, meanDelay, stats);
         this.messageQueue = messageQueue;
         this.senderId = senderId;
         this.failureRate = failureRate;
@@ -57,5 +58,24 @@ public class Sender implements Runnable {
 
     public void stop() {
         running = false;
+    }
+
+    private void validateArguments(IMessageQueue messageQueue, String senderId,
+                                              double failureRate, int meanDelay, MessageStats stats) {
+        if (messageQueue == null) {
+            throw new IllegalArgumentException("messageQueue cannot be null");
+        }
+        if (senderId == null || senderId.trim().isEmpty()) {
+            throw new IllegalArgumentException("senderId cannot be null or empty");
+        }
+        if (failureRate < 0.0 || failureRate >= 1.0) {
+            throw new IllegalArgumentException("failureRate must be between 0.0 and 1.0 excluding 1.0");
+        }
+        if (meanDelay < 0) {
+            throw new IllegalArgumentException("meanDelay cannot be negative");
+        }
+        if (stats == null) {
+            throw new IllegalArgumentException("stats cannot be null");
+        }
     }
 }
