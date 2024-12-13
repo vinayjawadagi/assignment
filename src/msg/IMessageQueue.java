@@ -1,9 +1,9 @@
 package msg;
 
 public interface IMessageQueue {
-    boolean add(Message message);
+    void add(Message message) throws InterruptedException;
 
-    Message remove();
+    Message remove() throws InterruptedException;
 
     boolean isEmpty();
 

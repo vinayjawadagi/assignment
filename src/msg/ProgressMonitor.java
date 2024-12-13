@@ -25,7 +25,7 @@ public class ProgressMonitor implements Runnable {
         }
     }
 
-    // helper method to print stats out to console
+    // Helper method to print stats out to console
     private void printStats() {
         System.out.println("\nSMS Simulation Statistics:");
         System.out.println("Messages Sent: " + stats.getSentCount());

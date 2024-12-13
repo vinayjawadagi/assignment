@@ -44,7 +44,7 @@ public class MessageStats {
     }
 
     public String toString() {
-        return "\nFinal Statistics" +
+        return "\nFinal Statistics:" +
                 "\nTotal Messages Sent: " + getSentCount() +
                 "\nTotal Messages Failed: " + getFailedCount() +
                 "\nAverage Processing Time: " + getAverageProcessingTime() + " ms";

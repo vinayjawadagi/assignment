@@ -19,7 +19,7 @@ public class Producer implements Runnable, IProducer {
             for (int i = 0; i < messageCount; i++) {
                 Message message = generateMessage();
                 messageQueue.add(message);
-                // Small delay between messages to simulate real world scenario
+                // Small delay between messages to simulate sending a message in real world
                 Thread.sleep(10);
             }
         } catch (InterruptedException e) {
@@ -29,12 +29,15 @@ public class Producer implements Runnable, IProducer {
 
     // Private method to generate a random string with random length
     private Message generateMessage() {
+        // Get a random message length between 1 to 100
         int length = random.nextInt(100) + 1;
         StringBuilder content = new StringBuilder(length);
+
         for (int i = 0; i < length; i++) {
-            // generate a random ascii char between 97 to 122 and convert to char
+            // Generate a random ascii char between 97 to 122 and convert to char
             content.append((char) (random.nextInt(26) + 'a'));
         }
+
         return new Message(content.toString());
     }
 }

@@ -29,7 +29,7 @@ public class Sender implements Runnable {
             try {
                 Message message = messageQueue.remove();
 
-                // Simulate sending according to the mean generate a random number between 0 to
+                // Simulate sending, according to the mean generate a random number between 0 to
                 // 2 times mean, which gives an average equal to mean
                 Thread.sleep(random.nextInt(meanDelay * 2));
 
