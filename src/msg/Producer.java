@@ -8,6 +8,7 @@ public class Producer implements Runnable, IProducer {
     private final Random random;
 
     public Producer(IMessageQueue messageQueue, int messageCount) {
+        validateArguments(messageQueue, messageCount);
         this.messageQueue = messageQueue;
         this.messageCount = messageCount;
         this.random = new Random();
@@ -29,15 +30,23 @@ public class Producer implements Runnable, IProducer {
 
     // Private method to generate a random string with random length
     private Message generateMessage() {
-        // Get a random message length between 1 to 100
+        // Get a random message length between 1 and 100
         int length = random.nextInt(100) + 1;
         StringBuilder content = new StringBuilder(length);
 
         for (int i = 0; i < length; i++) {
-            // Generate a random ascii char between 97 to 122 and convert to char
+            // Generate a random ascii char between 97 and 122 and convert to char
             content.append((char) (random.nextInt(26) + 'a'));
         }
 
         return new Message(content.toString());
+    }
+    private void validateArguments(IMessageQueue messageQueue, int messageCount) {
+        if (messageCount <= 0) {
+            throw new IllegalArgumentException("Message count must be greater than 0");
+        }
+        if (messageQueue == null) {
+            throw new NullPointerException("Message queue cannot be null");
+        }
     }
 }

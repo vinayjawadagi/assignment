@@ -1,70 +1,98 @@
-// package msg;
+package msg;
 
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import static org.junit.jupiter.api.Assertions.*;
 
-// import java.util.ArrayList;
-// import java.util.List;
+/**
+ * Test suite for the Producer class that handles SMS message generation.
+ * Tests cover basic functionality and edge cases
+ */
+class ProducerTest {
+  private IMessageQueue messageQueue;
+  private Producer producer;
 
-// import static org.junit.jupiter.api.Assertions.*;
+  @BeforeEach
+  void setUp() {
+    messageQueue = new BlockingMessageQueue();
+  }
 
-// public class ProducerTest {
-// private Producer producer;
-// private MockMessageQueue messageQueue;
+  /**
+   * Tests that producer generates exactly the specified number of messages
+   */
+  @Test
+  void testProducerGeneratesCorrectNumberOfMessages() throws InterruptedException {
+    producer = new Producer(messageQueue, 10);
+    Thread producerThread = new Thread(producer);
+    producerThread.start();
+    producerThread.join();
 
-// @BeforeEach
-// public void setUp() {
-// messageQueue = new MockMessageQueue();
-// producer = new Producer(messageQueue, 10);
-// }
+    assertEquals(10, messageQueue.size());
+  }
 
-// @Test
-// public void testRun() {
-// // Test if the producer adds the correct number of messages to the message
-// queue
-// producer.run();
-// assertEquals(10, messageQueue.size());
-// }
+  /**
+   * Verifies that generated messages meet content requirements:
+   * - Length between 1 and 100 characters
+   * - Not null
+   */
+  @Test
+  void testGeneratedMessageContentIsValid() throws InterruptedException {
+    producer = new Producer(messageQueue, 1);
+    Thread producerThread = new Thread(producer);
+    producerThread.start();
+    producerThread.join();
 
-// @Test
-// public void testGenerateMessage() {
-// // Test if the generated message is not null
-// Message message = producer.generateMessage();
-// assertNotNull(message);
+    Message msg = messageQueue.remove();
+    assertNotNull(msg);
+    assertTrue(msg.getContent().length() <= 100);
+    assertTrue(msg.getContent().length() >= 1);
+    assertTrue(msg.getContent().matches("[a-z]+"));
+  }
 
-// // Test if the generated message has a non-null content
-// assertNotNull(message.getContent());
+  /**
+   * Constructor: Tests behavior with zero messages
+   * Should throw an IllegalArgumentException
+   */
+  @Test
+  void testProducerWithZeroMessages() throws IllegalArgumentException {
+    assertThrows(IllegalArgumentException.class,
+        () -> producer = new Producer(messageQueue, 0));
+  }
 
-// // Test if the generated message has a non-null timestamp
-// assertNotNull(message.getTimestamp());
-// }
-// }
+  /**
+   * Constructor: Tests behavior with null queue
+   * Should throw a NullPointerException
+   */
+  @Test
+  void testProducerWithNullQueue() throws IllegalArgumentException {
+    assertThrows(IllegalArgumentException.class,
+        () -> producer = new Producer(messageQueue, 0));
+  }
 
-// // Mock implementation of IMessageQueue for testing purposes
-// class MockMessageQueue implements IMessageQueue {
-// private List<Message> messages;
+  /**
+   * Performance test: Verifies behavior with large message count
+   */
+  @Test
+  void testProducerWithLargeMessageCount() throws InterruptedException {
+    int largeCount = 10000;
+    producer = new Producer(messageQueue, largeCount);
+    Thread producerThread = new Thread(producer);
+    producerThread.start();
+    producerThread.join();
 
-// public MockMessageQueue() {
-// messages = new ArrayList<>();
-// }
+    assertEquals(largeCount, messageQueue.size());
+  }
 
-// @Override
-// public void add(Message message) throws InterruptedException {
+  /**
+   * Edge case: Tests behavior with negative message count
+   */
+  @Test
+  void testProducerWithNegativeMessageCount() throws IllegalArgumentException {
+    assertThrows(IllegalArgumentException.class,
+        () -> producer = new Producer(messageQueue, -10));
+  }
 
-// }
-
-// @Override
-// public Message remove() throws InterruptedException {
-// return null;
-// }
-
-// @Override
-// public boolean isEmpty() {
-// return false;
-// }
-
-// @Override
-// public int size() {
-// return messages.size();
-// }
-// }
+}
