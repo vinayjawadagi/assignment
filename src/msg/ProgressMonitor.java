@@ -6,6 +6,7 @@ public class ProgressMonitor implements Runnable {
     private volatile boolean running = true; // define
 
     public ProgressMonitor(MessageStats stats, int updateIntervalSeconds) {
+        validateArguments(stats, updateIntervalSeconds);
         this.stats = stats;
         this.updateIntervalSeconds = updateIntervalSeconds;
     }
@@ -37,5 +38,14 @@ public class ProgressMonitor implements Runnable {
 
     public void stop() {
         running = false;
+    }
+
+    private void validateArguments(MessageStats stats, int updateIntervalSeconds) {
+        if (updateIntervalSeconds < 0) {
+            throw new IllegalArgumentException("updateIntervalSeconds must be a positive integer");
+        }
+        if (stats == null) {
+            throw new IllegalArgumentException("stats cannot be null");
+        }
     }
 }
