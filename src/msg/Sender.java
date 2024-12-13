@@ -2,7 +2,10 @@ package msg;
 
 import java.util.Random;
 
-public class Sender implements Runnable {
+/**
+ * This class represents a real world entity that 'sends' a message in a message alerting system.
+ */
+public class Sender implements Runnable, ISender {
 
     private final IMessageQueue messageQueue;
     private final String senderId;
@@ -12,8 +15,15 @@ public class Sender implements Runnable {
     private final MessageStats stats;
     private volatile boolean running = true;
 
-    public Sender(
-            IMessageQueue messageQueue, String senderId,
+    /**
+     * Constructor for the sender class
+     * @param messageQueue Shared message queue instance
+     * @param senderId  Generated ID of this sender
+     * @param failureRate   Rate with which the message may fail
+     * @param meanDelay mean of the delay distribution
+     * @param stats Shared instance of the stats
+     */
+    public Sender(IMessageQueue messageQueue, String senderId,
             double failureRate, int meanDelay, MessageStats stats) {
         validateArguments(messageQueue, senderId, failureRate, meanDelay, stats);
         this.messageQueue = messageQueue;
@@ -24,6 +34,9 @@ public class Sender implements Runnable {
         this.stats = stats;
     }
 
+    /**
+     * Dequeues message from the shared queue and simulates sending it
+     */
     @Override
     public void run() {
         while (running) {
@@ -51,15 +64,21 @@ public class Sender implements Runnable {
             } catch (InterruptedException e) {
                 // If Interrupt signal received then stop this thread and set running to false
                 Thread.currentThread().interrupt();
-                running = false;
+                stop();
             }
         }
     }
 
+    /**
+     * Sets the running flag to false
+     */
     public void stop() {
         running = false;
     }
 
+    /**
+     * Helper method to validate constructor arguments
+     */
     private void validateArguments(IMessageQueue messageQueue, String senderId,
                                               double failureRate, int meanDelay, MessageStats stats) {
         if (messageQueue == null) {
